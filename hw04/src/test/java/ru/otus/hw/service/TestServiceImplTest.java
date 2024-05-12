@@ -1,9 +1,9 @@
 package ru.otus.hw.service;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import ru.otus.hw.dao.QuestionDao;
 import ru.otus.hw.domain.Answer;
 import ru.otus.hw.domain.Question;
@@ -19,16 +19,17 @@ import static org.mockito.Mockito.*;
 class TestServiceImplTest {
 
     @MockBean
-    LocalizedIOService ioService;
+    LocalizedIOService ioServiceMock;
     @MockBean
     QuestionDao questionDaoMock;
-    @SpyBean
+
+    @Autowired
     TestService testService;
 
     @Test
     void happyPass() {
         // prepare
-        when(ioService.readIntForRangeWithPromptLocalized(any(Integer.class), any(Integer.class), any(String.class), any(String.class))).thenReturn(1);
+        when(ioServiceMock.readIntForRangeWithPromptLocalized(any(Integer.class), any(Integer.class), any(String.class), any(String.class))).thenReturn(1);
 
         when(questionDaoMock.findAll()).thenReturn(
             List.of(new Question("Aaa", List.of(new Answer("Bbb", true))))
@@ -38,8 +39,8 @@ class TestServiceImplTest {
         TestResult testResult = testService.executeTestFor(new Student("James", "Dawson"));
 
         // verify
-        verify(ioService, times(1)).printLineLocalized("TestService.answer.the.questions");
-        verify(ioService, times(1)).printFormattedLine(any(), any(), any());
+        verify(ioServiceMock, times(1)).printLineLocalized("TestService.answer.the.questions");
+        verify(ioServiceMock, times(1)).printFormattedLine(any(), any(), any());
 
         assertEquals(1, testResult.getRightAnswersCount());
     }

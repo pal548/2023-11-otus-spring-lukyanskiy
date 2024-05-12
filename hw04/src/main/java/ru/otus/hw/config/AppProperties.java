@@ -8,18 +8,23 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.util.Locale;
 import java.util.Map;
 
-@Setter
 // Использовать @ConfigurationProperties.
 // Сейчас класс соответствует файлу настроек. Чтобы они сюда отобразились нужно только правильно разместить аннотации
 @ConfigurationProperties(prefix = "test")
-public class AppProperties implements TestConfig, TestFileNameProvider, LocaleConfig, CsvConfig {
+public class AppProperties implements TestConfig, TestFileNameProvider, LocaleConfig, CsvConfig, IoConfig {
 
     @Getter
+    @Setter
     private int rightAnswersCountToPass;
 
     @Getter
     private Locale locale;
 
+    @Getter
+    @Setter
+    private int ioMaxAttempts;
+
+    @Setter
     private Map<String, String> fileNameByLocaleTag;
 
     @NestedConfigurationProperty
@@ -42,5 +47,10 @@ public class AppProperties implements TestConfig, TestFileNameProvider, LocaleCo
     @Override
     public char getSeparator() {
         return csv.separator();
+    }
+
+    @Override
+    public int getMaxAttempts() {
+        return ioMaxAttempts;
     }
 }
